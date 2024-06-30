@@ -4,6 +4,10 @@ const app=express()
 
 const db=require("./db")
 
+require("dotenv").config()
+
+const PORT=process.env.PORT || 3000
+
 const {person}=require("./models/person")
 const {menuitem}=require("./models/menu_item")
 
@@ -50,9 +54,9 @@ app.use("/menu",menu_item)
 
 
 
+//const PORT=process.env.PORT || 3000
 
 
-
-app.listen(3000,()=>{
+app.listen(PORT,()=>{
     console.log("server has started")
 })

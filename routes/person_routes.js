@@ -11,7 +11,7 @@ router.post("/",async(req,res)=>{
 
     try{
         const data=req.body
-        const newperson=new Menuitem(data)
+        const newperson=new person(data)
         const response=await newperson.save()
         console.log("data saved")
         res.status(200).json(response)
