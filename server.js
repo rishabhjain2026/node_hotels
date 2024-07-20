@@ -13,7 +13,6 @@ const {menuitem}=require("./models/menu_item")
 
 const bodyparser=require("body-parser")
 app.use(bodyparser.json())
-
 //const person=require("./models/person")
 
 app.get("/",(req,res)=>{
