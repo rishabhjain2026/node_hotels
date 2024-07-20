@@ -6,7 +6,7 @@ const db=require("./db")
 
 require("dotenv").config()
 
-const PORT=process.env.PORT || 3000
+const PORT=process.env.port || 3000
 
 const {person}=require("./models/person")
 const {menuitem}=require("./models/menu_item")
