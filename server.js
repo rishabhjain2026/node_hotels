@@ -2,8 +2,11 @@ const express=require("express")
 
 const app=express()
 
+
+const passport=require("./auth")
 const db=require("./db")
 
+//const passport=require("passport")
 require("dotenv").config()
 
 const PORT=process.env.port || 3000
@@ -12,13 +15,46 @@ const {person}=require("./models/person")
 const {menuitem}=require("./models/menu_item")
 
 const bodyparser=require("body-parser")
-app.use(bodyparser.json())
+// app.use(bodyparser.json())
 //const person=require("./models/person")
 
-app.get("/",(req,res)=>{
+const logrequest=(req,res,next)=>{
+    console.log(`[${new Date().toLocaleString()}] request made to: ${req.originalUrl}`);
+    next();
+}
+
+app.use(logrequest);  //ye sab use karnga
+
+
+//app.get("/",logrequest,(req,res)=>{  isma likhna padhta ha
+
+const localautmiddleware=passport.authenticate('local',{session:false})
+app.get("/",localautmiddleware,(req,res)=>{
     res.send("welcome to my hotel")
 })
 
+
+// passport.use(new localstrategy(async(USERNAME,password,done)=>{
+//     try{
+//         console.log('received credential',USERNAME,password);
+//         const user=await person.findOne({username:USERNAME});
+//         if(!user)
+//             return done(null,false,{message:"incorrect username"});
+
+
+//         const ispasswordmatch=user.password===password?true:false;
+//         if(ispasswordmatch){
+//             return done(null,user)
+//         }else{
+//             return done(null,false,{message:"inccorect password"})
+//         }
+//     }
+//     catch(err){
+//         return done(err);
+//     }
+// }))
+
+app.use(passport.initialize());
 
 // // call kar is par "localhost:3000/idli"
 
