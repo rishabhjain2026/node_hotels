@@ -2,8 +2,8 @@ const express=require("express")
 
 const router=express.Router()
 
-const Menuitem=require("../models/menu_item")
-const { person } = require("../models/person")
+const Menuitem=require("./../models/menu_item")
+//const { person } = require("../models/person")
 
 router.post("/",async(req,res)=>{
     try{

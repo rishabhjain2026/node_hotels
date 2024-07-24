@@ -1,7 +1,7 @@
 
 const passport=require("passport")
 const localstrategy=require("passport-local").Strategy;
-const {person}=require("./models/person")
+const person=require("./models/person")
 
 
 passport.use(new localstrategy(async(USERNAME,password,done)=>{

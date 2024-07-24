@@ -41,6 +41,4 @@ const personschema=new mongoose.Schema({
 
 const person=mongoose.model("person",personschema)
 
-module.exports={
-    person
-}
+module.exports=person;

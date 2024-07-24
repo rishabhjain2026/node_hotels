@@ -2,20 +2,23 @@ const express=require("express")
 
 const app=express()
 
+// done
 
 const passport=require("./auth")
 const db=require("./db")
 
 //const passport=require("passport")
+//const localstrategy=require("passport-local").Strategy;
+
 require("dotenv").config()
 
 const PORT=process.env.port || 3000
 
 const {person}=require("./models/person")
-const {menuitem}=require("./models/menu_item")
+const menuitem=require("./models/menu_item")
 
 const bodyparser=require("body-parser")
-// app.use(bodyparser.json())
+app.use(bodyparser.json())
 //const person=require("./models/person")
 
 const logrequest=(req,res,next)=>{
