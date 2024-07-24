@@ -1,62 +1,115 @@
 const express=require("express")
+const { model, models } = require("mongoose")
 
 const router=express.Router()
 
-const Menuitem=require("./../models/menu_item")
-//const { person } = require("../models/person")
+const person=require("../models/person")
+const Menuitem = require("../models/menu_item")
 
-router.post("/",async(req,res)=>{
+const {jwtauthmiddleware,generatetoken}=require("./../jwt")
+
+router.post("/signup",async(req,res)=>{
+
     try{
         const data=req.body
-        const newMenu=new Menuitem(data)
-        const response=await newMenu.save()
-        console.log("menu added")
-        res.status(200).json(response)
+        const newperson=new person(data)
+        const response=await newperson.save()
+        console.log("data saved")
 
+        const payload={
+            id:response.id,
+            username:response.username
+        }
+        console.log(JSON.stringify(payload))
+        const token=generatetoken(payload)
+        console.log("token is",token)
+
+        res.status(200).json({response:response,token:token})
     }
     catch(err){
-        console.log("error in adding menu",err)
-        res.status(500).json({err:"error in adding menu"})
+        console.log(err)
+        res.status(500).json({error:"internal server error"})
     }
 
 })
 
-router.get("/",async(req,res)=>{
+
+router.post("/login",async(req,res)=>{
     try{
-        console.log("displayed menu")
-        const menu=await Menuitem.find()
-        res.status(200).json(menu)
+        const {username,password}=req.body
+        const user=await person.findOne({username:username})
+        if(!user || !(!await user.comparepassword(password))){
+            return res.status(401).json({error:"invalid username or password"})
+        }
+
+        const payload={
+            id:user.id,
+            username:user.username
+        }
+        const token=generatetoken(payload)
+        res.json({token})
+
     }
     catch(err){
-        console.log("error in geting menu item",err)
-        res.status(500).json({err:"cannot get menu item"})
-
+        console.log(err)
+        res.status(500).json({error:"internal server error"})
     }
 })
 
+router.get("/detail",async(req,res)=>{
+    try{
+        const data=await person.find()
+        console.log("data fetched")
+        res.status(200).json(data)
+    }
+    catch(err){
+        console.log(err)
+        res.status(500).json({error:"error occured"})
+    }
+})
 
-// router.put("./:id",async(req,res)=>{
-//     try{
-//         const personid=req.params.id
-//         const updatedpersondata=req.body
+router.put("./:id",async(req,res)=>{
+    try{
+        const personid=req.params.id
+        const updatedpersondata=req.body
 
-//         const response=await person.findByIdAndUpdate(personid,updatedpersondata,{
-//             new:true,
-//             runValidators:true,
-//         })
+        const response=await person.findByIdAndUpdate(personid,updatedpersondata,{
+            new:true,
+            runValidators:true,
+        })
 
 
-//         if(!response){
-//             return res.status(404).json({error:"person not found"})
-//         }
+        if(!response){
+            return res.status(404).json({error:"person not found"})
+        }
 
-//         console.log("data updated")
-//         res.status(200).json(response)
-//     }
-//     catch(err){
-//         console.log("error occured",err)
-//         res.status(500).json({error:"error occured"})
-//     }
-// })
+        console.log("data updated")
+        res.status(200).json(response)
+    }
+    catch(err){
+        console.log("error occured",err)
+        res.status(500).json({error:"error occured"})
+    }
+})
+
+router.get("/:worktype",async(req,res)=>{
+    try{
+        const worktype=req.params.worktype
+        if(worktype=="chef" ||worktype=="waiter"||worktype=="manager"){
+            const response=await person.find({work:worktype})
+            console.log("displayed your search worktype")
+            res.status(200).json(response)
+        }
+        else{
+            res.status(404).json({error:"internal server error"})
+        }
+    }
+    catch(err){
+        console.log("erroe in getting this worktype",err)
+        res.status(400).json({err:"cannot get this worktype"})
+    }
+})
 
 module.exports=router
+
+
